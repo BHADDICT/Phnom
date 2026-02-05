@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>PHИOM®</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="icon" href="./img/logo.PNG" type="image/png">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background: #fff;
+      color: #000;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: black;
+      color: white;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+
+    main {
+      display: flex;
+      flex-direction: row;
+      padding: 1rem 2rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .product-gallery {
+      flex: 1;
+      max-height: 80vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .product-gallery img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      flex: 1;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 1rem;
+      align-self: flex-start;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .product-info h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .price {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin: 1rem 0;
+    }
+
+    .selectors label {
+      font-size: 0.8rem;
+      color: #555;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .selectors {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .selectors button {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .selectors button.selected {
+      background: black;
+      color: white;
+      border-color: black;
+    }
+
+    .selectors button.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      position: relative;
+    }
+
+    .selectors button.disabled::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 1px;
+      width: 100%;
+      background: #888;
+      transform: rotate(-45deg);
+    }
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quantity button {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: 1px solid #ccc;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .quantity input {
+      width: 50px;
+      text-align: center;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .add-to-cart {
+      width: 100%;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 1rem;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.3s;
+    }
+
+    .add-to-cart:hover {
+      opacity: 0.9;
+    }
+
+    .shop-pay {
+      width: 100%;
+      background: #5a31f4;
+      color: white;
+      padding: 1rem;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border-radius: 30px;
+      border: none;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+    }
+
+    .description {
+      margin-top: 1.5rem;
+    }
+
+    .description h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
+    }
+
+    .description ul {
+      list-style: disc;
+      padding-left: 1.5rem;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+      h2 {
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .product-grid {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 20px;
+      
+    }
+
+    .product {
+      flex: 1;
+      min-width: 250px;
+      background: #f1f1f3;
+      border-radius: 20px;
+      padding: 10px;
+      text-align: center;
+      position: relative;
+    }
+
+    .product img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 20px;
+
+    }
+
+    .product-name {
+      margin-top: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .product-price {
+      margin: 5px 0 10px;
+      color: #444;
+    }
+
+    .add-to-cart {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: 1px solid #000;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: #000;
+    }
+
+    .add-to-cart:hover {
+      background: #ada9a9;
+   
+    }
+    button.selected {
+  background-color: #333;
+  color: #fff;
+}
+
+button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 300px;
+  background-color: #000;
+  color: #fff;
+  padding-top: 60px;
+  z-index: 1000;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  padding: 20px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100%;
+  background: white;
+  z-index: 1001;
+  padding: 30px;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+}
+
+.cart-sidebar.open {
+  right: 0;
+}
+
+.cart-close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.cart-sidebar h2 {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cart-item {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+}
+
+.cart-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cart-item .details {
+  flex: 1;
+}
+
+.cart-item .qty {
+  margin-top: 5px;
+}
+
+.cart-item .qty button {
+  border: none;
+  background: #eee;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.cart-item .remove {
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.cart-note {
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-top: 30px;
+}
+
+.checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: black;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+   .add-to-cart-single {
+      width: 100%;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 1rem;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.3s;
+    }
+.cart-icon {
+  position: relative; /* Required for absolute positioning of the badge */
+  cursor: pointer;
+}
+ ul li a {
+  text-decoration: none;
+  color: inherit; /* inherits color from parent (good for styling) */
+}
+
+ul li a:hover {
+  color: rgb(132, 132, 132); /* or any hover color you want */
+}
+
+#cartCount {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  line-height: 1;
+}
+
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .product-info {
+        position: static;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" id="closeBtn">&times;</span>
+<ul>
+  <li><a href="index.html">HOME</a></li>
+  <li><a href="product.html">PRODUCTS</a></li>
+  <li><a href="jacket.html">[PHИOM®-AW-UNITY] JACKET</a></li>
+  <li><a href="tee.html">[PHИOM®-AW-SCOPED] TEE</a></li>
+  <li><a href="pant.html">[PHИOM®-AW-D4RKM4TT3R] PANT</a></li>
+  <li><a href="pants.html">PANTS</a></li>
+  <li><a href="accessories.html">ACCESSORIES</a></li>
+  <li><a href="special-offer.html">SPECIAL OFFER</a></li>
+  <li><a href="faq.html">FAQ</a></li>
+  <li><a href="contact.html">CONTACT</a></li>
+  <li><a href="about.html">ABOUT</a></li>
+</ul>
+
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <span class="cart-close" id="cartClose">&times;</span>
+    <h2>CART</h2>
+    <div class="cart-items" id="cartItems"></div>
+    <p class="cart-note">Shipping & taxes calculated at checkout<br><strong>Delivery: $2.00</strong></p>
+    <button class="checkout-btn" id="checkoutBtn">CHECK OUT • $0.00</button>
+  </div>
+
+  <!-- Header -->
+<header>
+  <div class="menu-icon" id="menuIcon">☰</div>
+  <div class="logo">
+   <img src="./img/logo.PNG" alt="Logo" style="height: 71px;" />
+</div>
+  
+  <div class="cart-icon" id="cartIcon">
+    &#128722;
+    <span id="cartCount">0</span>
+  </div>
+</header>
+
+  <!-- Main Product View -->
+  <main>
+    <section class="product-gallery">
+      <img src="./img/product8.JPG" alt="T-shirt 1" />
+      <img src="./img/product5.JPG" alt="T-shirt 2" />
+      <img src="./img/product6.JPG" alt="T-shirt 3" />
+     <img src="./img/scoped2.JPG" alt="tee"/>
+     <img src="./img/scoped.JPG" alt="tee1"/>
+     <img src="./img/scoped3.JPG" alt="teeback"/>
+    </section>
+
+    <section class="product-info">
+      <h1>[PHИOM®-SCOPED] TEE</h1>
+      <p class="price">$39.00</p>
+
+      <div class="selectors">
+        <label>Size</label>
+        <button class="disabled" disabled>S</button>
+        <button class="disabled" disabled>M</button>
+        <button class="selected">L</button>
+        <button>XL</button>
+        <button class="disabled" disabled>XLL</button>
+      </div>
+
+      <div class="quantity">
+        <button onclick="changeQty(-1)">-</button>
+        <input type="text" id="qty" value="1" />
+        <button onclick="changeQty(1)">+</button>
+      </div>
+
+      <button class="add-to-cart-single">ADD TO CART</button>
+      <button class="shop-pay">Buy <strong>Now</strong></button>
+
+      <div class="description">
+        <h3>Description</h3>
+        <ul>
+          <li>[PHИOM®-AW-UNITY] TEE</li>
+          <li>Pre shrunk </li>
+          <li>100% cotton</li>
+          <li>Stonewashed effect</li>
+          <li>Copper logo</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Product Grid -->
+  <h2>MORE STUFF</h2>
+  <div class="product-grid">
+  <a href="jacket.html" class="product product-card" data-id="4" data-name="[PHИOM®-AW-UNITY] JACKET" data-price="69.00" data-img="./img/product3.JPG" style="text-decoration: none; color: black;">
+  <img src="./img/product3.JPG" alt="Huuuge Bag" />
+  <div class="product-name">[PHИOM®-AW-UNITY] JACKET</div>
+  <div class="product-price">$69.00</div>
+</a>
+
+  <a href="pant.html" class="product product-card" data-id="4" data-name="[PHИOM®-AW-UNITY] PANT" data-price="49.00" data-img="./img/product14.JPG" style="text-decoration: none; color: black;">
+  <img src="./img/product14.JPG" alt="Huuuge Bag" />
+  <div class="product-name">[PHИOM®-AW-D4RKM4TT3R] PANT</div>
+  <div class="product-price">$49.00</div>
+</a>
+
+   <a href="tee.html" class="product product-card" data-id="3" data-name="[PHИOM®-AW-UNITY] TEE" data-price="39.00" data-img="./img/scoped2.JPG" style="text-decoration: none; color: black;">
+  <img src="./img/scoped2.JPG" alt="Huuuge Bag" />
+  <div class="product-name">[PHИOM®-AW-SCOPED] TEE</div>
+  <div class="product-price">$39.00</div>
+</a>
+  </div>
+<script>
+  // Add event listener to "Shop Pay" button to add product and redirect to checkout
+  document.querySelector(".shop-pay").addEventListener("click", () => {
+    const selectedSize = document.querySelector('.selectors button.selected')?.textContent || "M";
+    const qty = parseInt(document.getElementById("qty").value) || 1;
+
+    const product = {
+      id: "main-product",
+      name: "[PHИOM®-SCOPED] TEE",
+      price: 39.00,
+      img: "./img/scoped2.JPG",
+      qty,
+      size: selectedSize
+    };
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Check if product with same size already in cart, increment qty if yes
+    const existing = cart.find(item => item.id === product.id && item.size === product.size);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      cart.push(product);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    window.location.href = "checkout.html";
+  });
+
+  // Size button selection for main product and grid products
+  document.querySelectorAll('.selectors button:not(.disabled)').forEach(button => {
+    button.addEventListener('click', () => {
+      const selectors = button.closest('.selectors');
+      selectors.querySelectorAll('button').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+    });
+  });
+
+  // DOM elements for menu, sidebar, cart
+  const menuIcon = document.getElementById("menuIcon");
+  const sidebar = document.getElementById("sidebar");
+  const closeBtn = document.getElementById("closeBtn");
+  const overlay = document.getElementById("overlay");
+  const cartIcon = document.getElementById("cartIcon");
+  const cartSidebar = document.getElementById("cartSidebar");
+  const cartClose = document.getElementById("cartClose");
+  const cartItemsEl = document.getElementById("cartItems");
+  const checkoutBtn = document.getElementById("checkoutBtn");
+  const cartCountEl = document.getElementById("cartCount");
+  const qtyInput = document.getElementById("qty");
+
+  // Load cart from localStorage or initialize empty array
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // Toggle menu sidebar
+  menuIcon.addEventListener("click", () => {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Clicking overlay closes menus and cart sidebar
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    cartSidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Toggle cart sidebar and render cart contents
+  cartIcon.addEventListener("click", () => {
+    cartSidebar.classList.add("open");
+    overlay.classList.add("show");
+    renderCart();
+  });
+
+  cartClose.addEventListener("click", () => {
+    cartSidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Change quantity input value for main product, ensuring minimum of 1
+  function changeQty(change) {
+    let qty = parseInt(qtyInput.value);
+    qty = isNaN(qty) ? 1 : qty + change;
+    qtyInput.value = Math.max(1, qty);
+  }
+
+  // Add main product to cart on clicking add-to-cart-single button
+  document.querySelector(".add-to-cart-single").addEventListener("click", () => {
+    const selectedSize = document.querySelector('.selectors button.selected')?.textContent || "M";
+    const qty = parseInt(qtyInput.value) || 1;
+
+    const product = {
+      id: "main-product",
+      name: "[PHИOM®-SCOPED] TEE",
+      price: 39.00,
+      img: "./img/scoped2.JPG",
+      qty,
+      size: selectedSize
+    };
+
+    const existing = cart.find(item => item.id === product.id && item.size === product.size);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      cart.push(product);
+    }
+
+    renderCart();
+  });
+
+  // Add grid products to cart when their add-to-cart buttons are clicked
+  document.querySelectorAll(".add-to-cart").forEach(button => {
+    button.addEventListener("click", (e) => {
+      const card = e.target.closest(".product-card");
+      const id = card.dataset.id;
+      const name = card.dataset.name;
+      const price = parseFloat(card.dataset.price);
+      const img = card.dataset.img;
+
+      // Get selected size from size buttons in product card, default "M"
+      const selectedSizeBtn = card.querySelector('.size-selectors button.selected');
+      const size = selectedSizeBtn ? selectedSizeBtn.textContent.trim() : "M";
+
+      const existing = cart.find(item => item.id === id && item.size === size);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ id, name, price, img, qty: 1, size });
+      }
+      renderCart();
+    });
+  });
+
+  // Render cart items, update quantities, and totals dynamically
+  function renderCart() {
+    cartItemsEl.innerHTML = "";
+    let subtotal = 0;
+    let totalItems = 0;
+
+    cart.forEach(item => {
+      subtotal += item.price * item.qty;
+      totalItems += item.qty;
+
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <div class="details">
+          <p><strong>${item.name}</strong></p>
+          <p>Size: ${item.size || "M"}</p>
+          <p>$${item.price.toFixed(2)}</p>
+          <div class="qty">
+            <button class="decrease">-</button>
+            <span>${item.qty}</span>
+            <button class="increase">+</button>
+          </div>
+        </div>
+        <span class="remove" title="Remove item">🗑</span>
+      `;
+
+      // Increase quantity button
+      div.querySelector(".increase").addEventListener("click", () => {
+        item.qty++;
+        renderCart();
+      });
+
+      // Decrease quantity button, remove item if qty reaches 0
+      div.querySelector(".decrease").addEventListener("click", () => {
+        if (item.qty > 1) {
+          item.qty--;
+        } else {
+          cart = cart.filter(i => !(i.id === item.id && i.size === item.size));
+        }
+        renderCart();
+      });
+
+      // Remove item button
+      div.querySelector(".remove").addEventListener("click", () => {
+        cart = cart.filter(i => !(i.id === item.id && i.size === item.size));
+        renderCart();
+      });
+
+      cartItemsEl.appendChild(div);
+    });
+
+    // Update checkout button text and cart count badge
+    checkoutBtn.textContent = `CHECK OUT • $${subtotal.toFixed(2)}`;
+    cartCountEl.textContent = totalItems;
+
+    // Persist updated cart to localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  // Checkout button redirects to checkout page
+  checkoutBtn.addEventListener("click", () => {
+    window.location.href = "checkout.html";
+  });
+
+  // Initial cart render on page load
+  renderCart();
+</script>
+
+
+</body>
+</html>

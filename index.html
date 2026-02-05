@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PHИOM®</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="icon" href="./img/logo.PNG" type="image/png">
+
+
+
+  <link rel="stylesheet" href="pro.css">
+  <style>
+   
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: monospace;
+      background: #fff;
+      color: #000;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #000;
+padding: 10px 10px;
+
+      color: #fff;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+    }
+
+    .menu-icon,
+    .cart-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      padding: 60px;
+    }
+
+ 
+    .product-card:hover {
+      transform: scale(0.97);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .product-card h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .product-card .price {
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .product-card .sold-out {
+      color: #999;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .add-to-cart {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #000;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .product-card:hover .add-to-cart {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 300px;
+      background-color: #000;
+      color: #fff;
+      padding-top: 60px;
+      z-index: 1000;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      padding: 20px;
+      border-bottom: 1px solid #222;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 900;
+      display: none;
+    }
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+ .products {
+      padding: 3rem 0 2rem;
+    }
+
+    .products-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+      padding: 0 2rem;
+    }
+
+    .product-card {
+      width: 320px;
+      background: #f4f4f4;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      transition: transform 0.3s, border-color 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      border-color: #aaa;
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      padding-top: 120%;
+    }
+
+    .image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+      transition: opacity 0.5s ease;
+      opacity: 0;
+    }
+
+    .image-container img:first-child {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .product-card:hover .image-container img:nth-child(1) { opacity: 0; }
+    .product-card:hover .image-container img:nth-child(2) { opacity: 1; z-index: 2; animation: fade 4s infinite; }
+    .product-card:hover .image-container img:nth-child(3) { animation: fade 4s infinite 1s; }
+    .product-card:hover .image-container img:nth-child(4) { animation: fade 4s infinite 2s; }
+
+    @keyframes fade {
+      0%   { opacity: 0; }
+      25%  { opacity: 1; }
+      50%  { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    .product-title {
+      font-size: 1.1rem;
+      margin-top: 0.8rem;
+      font-weight: bold;
+    }
+
+    .product-price {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    .quick-add {
+      margin-top: 8px;
+      background-color: rgba(0, 0, 0, 0.1);
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+#cartCount {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden;
+}
+
+.hero video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
+.hero .content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+  .hero {
+     
+      height: 300px;
+      width: 100%;
+   
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background: white;
+      z-index: 1001;
+      padding: 30px;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .cart-close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .cart-sidebar h2 {
+      font-size: 1rem;
+      letter-spacing: 2px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 15px;
+    }
+
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .cart-item .details {
+      flex: 1;
+    }
+
+    .cart-item .qty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .cart-item .qty button {
+      border: none;
+      background: #eee;
+      padding: 3px 10px;
+      cursor: pointer;
+    }
+
+    .cart-item .remove {
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .cart-note {
+      font-size: 0.8rem;
+      font-style: italic;
+      margin-top: 30px;
+    }
+
+    .checkout-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: black;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+      footer {
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    ul li a {
+  text-decoration: none;
+  color: inherit; /* inherits color from parent (good for styling) */
+}
+
+ul li a:hover {
+  color: rgb(132, 132, 132); /* or any hover color you want */
+}
+a {
+  text-decoration: none;   /* removes underline */
+  color: inherit;          /* makes link color same as surrounding text */
+}
+a.product-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* ensures full clickable area */
+}
+
+@media (max-aspect-ratio: 16/9) {
+  .hero video {
+    min-width: 100%;
+    min-height: auto;
+    height: 100%;
+    width: auto;
+  }
+}
+
+@media (max-aspect-ratio: 9/16) {
+  .hero video {
+    min-width: auto;
+    min-height: 100%;
+    width: 100%;
+    height: auto;
+  }
+}
+  @media (max-width: 480px) {
+     @media (max-width: 600px) {
+    .header {
+      padding: 0 10px;
+      height: 60px;
+    }
+
+    .menu-icon, .cart-icon {
+      font-size: 24px;
+    }
+
+    .logo img {
+      height: 50px;
+    }
+  }
+
+      .hero {
+        height: 200px;
+      }
+
+      .products-wrapper {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        padding: 0 1rem;
+      }
+
+      .product-card {
+        width: 100%;
+        padding: 8px;
+      }
+
+      .product-title,
+      .product-price {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" id="closeBtn">&times;</span>
+<ul>
+  <li><a href="index.html">HOME</a></li>
+  <li><a href="product.html">PRODUCTS</a></li>
+  <li><a href="jacket.html">[PHИOM®-AW-UNITY] JACKET</a></li>
+  <li><a href="tee.html">[PHИOM®-AW-SCOPED] TEE</a></li>
+  <li><a href="pant.html">[PHИOM®-AW-D4RKM4TT3R] PANT</a></li>
+  <li><a href="pants.html">PANTS</a></li>
+  <li><a href="accessories.html">ACCESSORIES</a></li>
+  <li><a href="special-offer.html">SPECIAL OFFER</a></li>
+  <li><a href="faq.html">FAQ</a></li>
+  <li><a href="contact.html">CONTACT</a></li>
+  <li><a href="about.html">ABOUT</a></li>
+</ul>
+
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <span class="cart-close" id="cartClose">&times;</span>
+    <h2>CART</h2>
+    <div class="cart-items" id="cartItems"></div>
+    <p class="cart-note">Shipping & taxes calculated at checkout<br><strong>Delivery: $2.00</strong></p>
+    <button class="checkout-btn" id="checkoutBtn">CHECK OUT • $0.00</button>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="menu-icon" id="menuIcon">&#9776;</div>
+   <div class="logo">
+ <div class="logo">
+  <img src="./img/logo.PNG" alt="Logo" style="height: 71px;" />
+</div>
+
+</div>
+
+    <div class="cart-icon" id="cartIcon">&#128722;
+         <span id="cartCount">0</span>
+    </div>
+  
+ 
+
+
+  </header>
+ <div class="overlay" id="overlay"></div>
+
+ <section class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="./img/phnom.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="content">
+    <!-- Add your hero content here -->
+   
+  </div>
+</section>
+
+
+<section class="products">
+  <div class="products-wrapper">
+
+    <a href="jacket.html" class="product-card-link">
+      <div class="product-card" data-id="1" data-name="[PHИOM®-AW-UNITY] JACKET" data-price="69.00" data-img="./img/product1.JPG">
+        <div class="image-container">
+          <img src="./img/product1.JPG" alt="Image 1" />
+          <img src="./img/product2.JPG" alt="Image 2" />
+          <img src="./img/product9.JPG" alt="Image 5" />
+          <img src="./img/product10.JPG" alt="Image 4" />
+        </div>
+        <p class="product-title">[PHИOM®-AW-UNITY] JACKET</p>
+        <p class="product-price">$69.00</p>
+        <button class="add-to-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(this);">Add to Cart</button>
+      </div>
+    </a>
+
+    <a href="tee.html" class="product-card-link">
+      <div class="product-card" data-id="2" data-name="[PHИOM®-AW-SCOPED] TEE" data-price="39.00" data-img="./img/scoped2.JPG">
+        <div class="image-container">
+            <img src="./img/scoped3.JPG" alt="image 5"/>
+          <img src="./img/scoped2.JPG" alt="Image 1" />
+          <img src="./img/product5.JPG" alt="Image 2" />
+          <img src="./img/product7.JPG" alt="Image 3" />
+          <img src="./img/product6.JPG" alt="Image 4" />
+          <img src="./img/scoped3.JPG" alt="image 5"/>
+        </div>
+        <p class="product-title">[PHИOM®-AW-SCOPED] TEE</p>
+        <p class="product-price">$39.00</p>
+         <button class="add-to-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(this);">Add to Cart</button>
+      </div>
+    </a>
+    <a href="pant.html" class="product-card-link">
+      <div class="product-card" data-id="4" data-name="[PHИOM®-AW-D4RKM4TT3R] PANT" data-price="49.00" data-img="./img/product14.JPG">
+        <div class="image-container">
+          <img src="./img/product14.JPG" alt="Image 1" />
+          <img src="./img/product15.JPG" alt="Image 2" />
+          <img src="./img/product13.JPG" alt="Image 3" />
+          <img src="./img/product12.JPG" alt="Image 4" />
+        </div>
+        <p class="product-title">[PHИOM®-AW-D4RKM4TT3R] PANT</p>
+        <p class="product-price">$49.00</p>
+          <button class="add-to-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(this);">Add to Cart</button>
+      </div>
+    </a>
+   <a href="skirt.html" class="product-card-link">
+      <div class="product-card" data-id="6" data-name="Dark Sentinel skirt" data-price="39.00" data-img="./img/skirt.jpg">
+        <div class="image-container">
+          <img src="./img/skirt.jpg" alt="Image 1" />
+          <img src="./img/skirt1.jpg" alt="Image 2" />
+          <img src="./img/skirt3.jpg" alt="Image 3" />
+          <img src="./img/skirt4.jpg" alt="Image 4" />
+        </div>
+        <p class="product-title" style="text-transform: uppercase;"
+>Dark Sentinel skirt</p>
+        <p class="product-price">$39.00</p>
+          <button class="add-to-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(this);">Add to Cart</button>
+      </div>
+    </a>
+       <a href="warriorr.html" class="product-card-link">
+      <div class="product-card" data-id="5" data-name="BLUE WARRIOR JACKET" data-price="49.00" data-img="./img/jacket.jpg">
+        <div class="image-container">
+          <img src="./img/jacket.jpg" alt="Image 1" />
+          <img src="./img/jacket1.jpg" alt="Image 2" />
+          <img src="./img/jacket2.jpg" alt="Image 3" />
+          <img src="./img/jacket3.jpg" alt="Image 4" />
+        </div>
+        <p class="product-title">BLUE WARRIOR JACKET</p>
+        <p class="product-price">$49.00</p>
+          <button class="add-to-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(this);">Add to Cart</button>
+      </div>
+    </a>
+      <a href="flare.html" class="product-card-link">
+      <div class="product-card" data-id="7" data-name="“Explorer” denim flared jeans" data-price="79.00" data-img="./img/flare.jpg">
+        <div class="image-container">
+          <img src="./img/flare.jpg" alt="Image 1" />
+          <img src="./img/flare1.jpg" alt="Image 2" />
+          <img src="./img/flare2.jpg" alt="Image 3" />
+          <img src="./img/flare3.jpg" alt="Image 4" />
+        </div>
+        <p class="product-title" style="text-transform: uppercase;"
+>“Explorer” denim flared jeans</p>
+        <p class="product-price">$79.00</p>
+          <button class="add-to-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(this);">Add to Cart</button>
+      </div>
+    </a>
+  </div>
+</section>
+
+    <footer>
+    PHИOM® 2025 &nbsp; 
+  </footer>
+  <!-- JavaScript -->
+ <script>
+  const menuIcon = document.getElementById("menuIcon");
+  const sidebar = document.getElementById("sidebar");
+  const closeBtn = document.getElementById("closeBtn");
+  const overlay = document.getElementById("overlay");
+  const cartIcon = document.getElementById("cartIcon");
+  const cartSidebar = document.getElementById("cartSidebar");
+  const cartClose = document.getElementById("cartClose");
+  const cartItemsEl = document.getElementById("cartItems");
+  const checkoutBtn = document.getElementById("checkoutBtn");
+  const cartCountEl = document.getElementById("cartCount");
+
+  let cart = [];
+
+  // Toggle main sidebar
+  menuIcon.addEventListener("click", () => {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    cartSidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Toggle cart sidebar
+  cartIcon.addEventListener("click", () => {
+    cartSidebar.classList.add("open");
+    overlay.classList.add("show");
+    renderCart();
+  });
+
+  cartClose.addEventListener("click", () => {
+    cartSidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Add to cart
+  document.querySelectorAll(".add-to-cart").forEach(button => {
+    button.addEventListener("click", (e) => {
+      const card = e.target.closest(".product-card");
+      const id = card.dataset.id;
+      const name = card.dataset.name;
+      const price = parseFloat(card.dataset.price);
+      const img = card.dataset.img;
+
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ id, name, price, img, qty: 1 });
+      }
+      renderCart();
+    });
+  });
+
+  // ✅ Main renderCart function (only one!)
+  function renderCart() {
+    cartItemsEl.innerHTML = "";
+    let subtotal = 0;
+    let totalItems = 0;
+
+    cart.forEach(item => {
+      subtotal += item.price * item.qty;
+      totalItems += item.qty;
+
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <div class="details">
+          <p><strong>${item.name}</strong></p>
+          <p>$${item.price.toFixed(2)}</p>
+          <div class="qty">
+            <button class="decrease">-</button>
+            <span>${item.qty}</span>
+            <button class="increase">+</button>
+          </div>
+        </div>
+        <span class="remove">🗑</span>
+      `;
+
+      div.querySelector(".increase").addEventListener("click", () => {
+        item.qty++;
+        renderCart();
+      });
+
+      div.querySelector(".decrease").addEventListener("click", () => {
+        if (item.qty > 1) {
+          item.qty--;
+        } else {
+          cart = cart.filter(i => i.id !== item.id);
+        }
+        renderCart();
+      });
+
+      div.querySelector(".remove").addEventListener("click", () => {
+        cart = cart.filter(i => i.id !== item.id);
+        renderCart();
+      });
+
+      cartItemsEl.appendChild(div);
+    });
+
+    const deliveryFee = 2;
+    const total = subtotal + deliveryFee;
+
+      // Update checkout button text
+    checkoutBtn.textContent = `CHECK OUT • $${total.toFixed(2)}`;
+
+    // Update cart icon count
+    cartCountEl.textContent = totalItems;
+
+    // Save cart to localStorage for access on checkout page
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+  }
+checkoutBtn.addEventListener("click", () => {
+  // cart already saved to localStorage
+  window.location.href = "checkout.html"; // Make sure your checkout.html path is correct
+});
+
+</script>
+
+</body>
+</html>

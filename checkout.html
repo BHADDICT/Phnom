@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>PHИOM®</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="icon" href="./img/logo.PNG" type="image/png">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      animation: fadeIn 1.5s ease-in;
+    }
+    header {
+      background: #000;
+      padding: 20px;
+      text-align: center;
+      animation: slideDown 1s ease forwards;
+    }
+    .logo img { height: 70px; }
+
+    .checkout-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 30px 20px;
+      gap: 40px;
+      animation: slideUp 1.2s ease forwards;
+    }
+
+    .checkout-form, .cart-summary {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .checkout-form:hover, .cart-summary:hover { transform: translateY(-5px); }
+    .checkout-form { flex: 2; }
+    .cart-summary { flex: 1; }
+
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 1.2rem;
+    }
+
+    input, select {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #000;
+      outline: none;
+    }
+
+    .review-btn {
+      margin-top: 20px;
+      padding: 14px;
+      width: 100%;
+      background-color: #000;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.4s ease, transform 0.3s ease;
+    }
+
+    .review-btn:hover {
+      background-color: #333;
+      transform: scale(1.03);
+    }
+
+    .cart-summary ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .cart-summary li {
+      display: flex;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+
+    .cart-summary img {
+      width: 60px;
+      height: 60px;
+      margin-right: 12px;
+      object-fit: cover;
+      border-radius: 6px;
+      background-color: #eee;
+      transition: transform 0.3s ease;
+    }
+
+    .cart-summary li:hover img {
+      transform: scale(1.05);
+    }
+
+    .totals p, .totals strong {
+      display: block;
+      margin: 8px 0;
+      color: #444;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-container { flex-direction: column; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="img/logo.PNG" alt="Logo" />
+    </div>
+  </header>
+
+  <main class="checkout-container">
+    <section class="checkout-form">
+      <form id="checkout-form">
+        <h2>Contact</h2>
+        <input type="email" id="email" placeholder="Email" required>
+
+        <h2>Delivery</h2>
+        <select id="locationSelect" onchange="handleSelectChange()" required>
+          <option value="">Select location</option>
+          <option value="Phnom Penh">Phnom Penh</option>
+          <option value="OtherProvince">Provinces</option>
+        </select>
+        <input type="text" id="provinceInput" placeholder="Enter province name" style="display: none;" />
+        <input type="text" placeholder="First name" required>
+        <input type="text" placeholder="Last name" required>
+        <input type="text" id="phone" placeholder="Phone" required>
+        <input type="text" id="address" placeholder="Address" required>
+
+        <h2>Payment via ABA</h2>
+        <div class="payment-section" style="text-align: center;">
+          <p>Scan the QR code using ABA app:</p>
+          <img src="./img/code.jpg" alt="ABA QR Code" style="width: 200px; height: auto;" />
+          <p><strong id="payment-total">Total Amount: $0.00</strong></p>
+          <p>Send payment screenshot to our Telegram:</p>
+          <a href="https://t.me/thesokheng" target="_blank">@PHИOM®</a>
+        </div>
+
+        <h2 style="margin-top: 30px;">Payment Confirmation</h2>
+        <select id="paymentStatus" required>
+          <option value="">Select payment status</option>
+          <option value="paid">Paid</option>
+          <option value="unpaid">Unpaid</option>
+          <option value="COD">COD</option>
+        </select>
+
+        <button id="review-order-btn" class="review-btn">Confirm order</button>
+      </form>
+    </section>
+
+<aside class="cart-summary">
+  <h2>Your Cart</h2>
+  <ul id="cart-list"></ul>
+  <div class="totals" id="totals-section"></div>
+
+  <!-- Promo code section -->
+  <div class="promo-section" style="margin-top: 20px;">
+    <input type="text" id="promoCode" placeholder="Enter promo code"
+      style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" />
+    <button onclick="applyPromoCode()" class="review-btn" style="margin-top: 10px;">Apply</button>
+    <p id="promo-message" style="color: green; font-weight: bold; margin-top: 10px;"></p>
+  </div>
+</aside>
+
+
+  </main>
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "jI4O--8j4phl8q7qx",
+      });
+   })();
+</script>
+<script src="promo.js"></script>
+  <!-- EmailJS SDK -->
+ 
+  <script>
+
+(function () {
+  emailjs.init({
+    publicKey: "jI4O--8j4phl8q7qx",
+  });
+})();
+
+function handleSelectChange() {
+  const input = document.getElementById("provinceInput");
+  input.style.display = (document.getElementById("locationSelect").value === "OtherProvince") ? "block" : "none";
+}
+
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartList = document.getElementById('cart-list');
+const totalsSection = document.getElementById('totals-section');
+
+function renderCart() {
+  let subtotal = 0;
+  cartList.innerHTML = '';
+  cart.forEach(item => {
+    const itemTotal = item.price * item.qty;
+    subtotal += itemTotal;
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <div>
+        <p><strong>${item.name}</strong></p>
+        <p>Size: ${item.size || 'M'}</p>
+        <p>${item.qty} x $${item.price} = $${itemTotal.toFixed(2)}</p>
+      </div>
+    `;
+    cartList.appendChild(li);
+  });
+  const shipping = 2;
+  const total = subtotal + shipping;
+  totalsSection.innerHTML = `
+    <p>Subtotal: $${subtotal.toFixed(2)}</p>
+    <p>Shipping: $${shipping.toFixed(2)}</p>
+    <strong>Total: $${total.toFixed(2)}</strong>
+  `;
+  document.getElementById('payment-total').innerText = `Total Amount: $${total.toFixed(2)}`;
+}
+
+function buildEmailContent(cartItems) {
+  let itemsHtml = '';
+  let subtotal = 0;
+
+  cartItems.forEach(item => {
+    const itemTotal = item.price * item.qty;
+    subtotal += itemTotal;
+    itemsHtml += `
+      <tr>
+        <td style="padding: 10px; border: 1px solid #ddd;"><img src="${item.img}" alt="${item.name}" width="50" /></td>
+        <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">${item.size || 'M'}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">${item.qty}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">$${(itemTotal).toFixed(2)}</td>
+      </tr>
+    `;
+  });
+
+  const shipping = 2;
+  const total = subtotal + shipping;
+
+  return `
+    <h3>Order Details:</h3>
+    <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
+      <thead style="background-color: #f3f3f3;">
+        <tr>
+          <th style="padding: 10px; border: 1px solid #ddd;">Image</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">Product</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">Size</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">Qty</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHtml}
+      </tbody>
+    </table>
+
+    <br />
+
+    <h3>Order Summary</h3>
+    <p style="margin: 5px 0;">Subtotal: $${subtotal.toFixed(2)}</p>
+    <p style="margin: 5px 0;">Shipping: $${shipping.toFixed(2)}</p>
+    <p style="font-weight: bold; margin: 5px 0;">Total: $${total.toFixed(2)}</p>
+  `;
+}
+
+document.getElementById('review-order-btn').addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const location = document.getElementById("locationSelect").value;
+  const province = document.getElementById("provinceInput").value.trim();
+  const firstName = document.querySelector('input[placeholder="First name"]').value.trim();
+  const lastName = document.querySelector('input[placeholder="Last name"]').value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const paymentStatus = document.getElementById("paymentStatus").value;
+  const sizesSummary = cart.map(item => `${item.name} (Size: ${item.size || 'M'}) x${item.qty}`).join(', ');
+
+  if (!email) return alert("Please enter your email.");
+  if (!paymentStatus) return alert("Please select payment status.");
+  if (paymentStatus === "unpaid") return alert("Please complete your payment first.");
+  if (cart.length === 0) return alert("Your cart is empty.");
+
+  const emailParams = {
+    user_email: email,
+    cart_html: buildEmailContent(cart),
+    to_name: "phnom03 team",
+    reply_to: email,
+    location,
+    province,
+    first_name: firstName,
+    last_name: lastName,
+    phone,
+    address,
+    payment_status: paymentStatus,
+    sizes_summary: sizesSummary
+  };
+
+  emailjs.send('service_z8sdabt', 'template_a40r9ta', emailParams)
+    .then(() => {
+      alert('Receipt sent successfully! Thank you.');
+      localStorage.removeItem('cart');
+      window.location.href = "thankyou.html";
+    })
+    .catch((error) => {
+      alert('Failed to send email. Please try again later.');
+      console.error("EmailJS error:", error);
+    });
+});
+
+renderCart();
+
+  </script>
+</body>
+</html>
