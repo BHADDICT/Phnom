@@ -219,154 +219,158 @@
 <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
 </script>
-<script type="text/javascript">
-   (function(){
-      emailjs.init({
-        publicKey: "jI4O--8j4phl8q7qx",
-      });
-   })();
-</script>
+
 <script src="promo.js"></script>
-  <!-- EmailJS SDK -->
- 
-  <script>
 
-(function () {
-  emailjs.init({
-    publicKey: "jI4O--8j4phl8q7qx",
-  });
-})();
+<script>
+  // =========================
+  // 1️⃣ Initialize EmailJS
+  // =========================
+  emailjs.init("OfyP9DFeQYXEUmxkp");
 
-function handleSelectChange() {
-  const input = document.getElementById("provinceInput");
-  input.style.display = (document.getElementById("locationSelect").value === "OtherProvince") ? "block" : "none";
-}
+  // =========================
+  // 2️⃣ Handle "OtherProvince" input
+  // =========================
+  function handleSelectChange() {
+    const input = document.getElementById("provinceInput");
+    input.style.display = (document.getElementById("locationSelect").value === "OtherProvince") ? "block" : "none";
+  }
 
-const cart = JSON.parse(localStorage.getItem('cart')) || [];
-const cartList = document.getElementById('cart-list');
-const totalsSection = document.getElementById('totals-section');
+  // =========================
+  // 3️⃣ Cart Rendering
+  // =========================
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cartList = document.getElementById('cart-list');
+  const totalsSection = document.getElementById('totals-section');
 
-function renderCart() {
-  let subtotal = 0;
-  cartList.innerHTML = '';
-  cart.forEach(item => {
-    const itemTotal = item.price * item.qty;
-    subtotal += itemTotal;
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <img src="${item.img}" alt="${item.name}">
-      <div>
-        <p><strong>${item.name}</strong></p>
-        <p>Size: ${item.size || 'M'}</p>
-        <p>${item.qty} x $${item.price} = $${itemTotal.toFixed(2)}</p>
-      </div>
-    `;
-    cartList.appendChild(li);
-  });
-  const shipping = 2;
-  const total = subtotal + shipping;
-  totalsSection.innerHTML = `
-    <p>Subtotal: $${subtotal.toFixed(2)}</p>
-    <p>Shipping: $${shipping.toFixed(2)}</p>
-    <strong>Total: $${total.toFixed(2)}</strong>
-  `;
-  document.getElementById('payment-total').innerText = `Total Amount: $${total.toFixed(2)}`;
-}
-
-function buildEmailContent(cartItems) {
-  let itemsHtml = '';
-  let subtotal = 0;
-
-  cartItems.forEach(item => {
-    const itemTotal = item.price * item.qty;
-    subtotal += itemTotal;
-    itemsHtml += `
-      <tr>
-        <td style="padding: 10px; border: 1px solid #ddd;"><img src="${item.img}" alt="${item.name}" width="50" /></td>
-        <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
-        <td style="padding: 10px; border: 1px solid #ddd;">${item.size || 'M'}</td>
-        <td style="padding: 10px; border: 1px solid #ddd;">${item.qty}</td>
-        <td style="padding: 10px; border: 1px solid #ddd;">$${(itemTotal).toFixed(2)}</td>
-      </tr>
-    `;
-  });
-
-  const shipping = 2;
-  const total = subtotal + shipping;
-
-  return `
-    <h3>Order Details:</h3>
-    <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
-      <thead style="background-color: #f3f3f3;">
-        <tr>
-          <th style="padding: 10px; border: 1px solid #ddd;">Image</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">Product</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">Size</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">Qty</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${itemsHtml}
-      </tbody>
-    </table>
-
-    <br />
-
-    <h3>Order Summary</h3>
-    <p style="margin: 5px 0;">Subtotal: $${subtotal.toFixed(2)}</p>
-    <p style="margin: 5px 0;">Shipping: $${shipping.toFixed(2)}</p>
-    <p style="font-weight: bold; margin: 5px 0;">Total: $${total.toFixed(2)}</p>
-  `;
-}
-
-document.getElementById('review-order-btn').addEventListener('click', (e) => {
-  e.preventDefault();
-
-  const email = document.getElementById("email").value.trim();
-  const location = document.getElementById("locationSelect").value;
-  const province = document.getElementById("provinceInput").value.trim();
-  const firstName = document.querySelector('input[placeholder="First name"]').value.trim();
-  const lastName = document.querySelector('input[placeholder="Last name"]').value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const address = document.getElementById("address").value.trim();
-  const paymentStatus = document.getElementById("paymentStatus").value;
-  const sizesSummary = cart.map(item => `${item.name} (Size: ${item.size || 'M'}) x${item.qty}`).join(', ');
-
-  if (!email) return alert("Please enter your email.");
-  if (!paymentStatus) return alert("Please select payment status.");
-  if (paymentStatus === "unpaid") return alert("Please complete your payment first.");
-  if (cart.length === 0) return alert("Your cart is empty.");
-
-  const emailParams = {
-    user_email: email,
-    cart_html: buildEmailContent(cart),
-    to_name: "phnom03 team",
-    reply_to: email,
-    location,
-    province,
-    first_name: firstName,
-    last_name: lastName,
-    phone,
-    address,
-    payment_status: paymentStatus,
-    sizes_summary: sizesSummary
-  };
-
-  emailjs.send('service_z8sdabt', 'template_a40r9ta', emailParams)
-    .then(() => {
-      alert('Receipt sent successfully! Thank you.');
-      localStorage.removeItem('cart');
-      window.location.href = "thankyou.html";
-    })
-    .catch((error) => {
-      alert('Failed to send email. Please try again later.');
-      console.error("EmailJS error:", error);
+  function renderCart() {
+    let subtotal = 0;
+    cartList.innerHTML = '';
+    cart.forEach(item => {
+      const itemTotal = item.price * item.qty;
+      subtotal += itemTotal;
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <div>
+          <p><strong>${item.name}</strong></p>
+          <p>Size: ${item.size || 'M'}</p>
+          <p>${item.qty} x $${item.price} = $${itemTotal.toFixed(2)}</p>
+        </div>
+      `;
+      cartList.appendChild(li);
     });
-});
+    const shipping = 2;
+    const total = subtotal + shipping;
+    totalsSection.innerHTML = `
+      <p>Subtotal: $${subtotal.toFixed(2)}</p>
+      <p>Shipping: $${shipping.toFixed(2)}</p>
+      <strong>Total: $${total.toFixed(2)}</strong>
+    `;
+    document.getElementById('payment-total').innerText = `Total Amount: $${total.toFixed(2)}`;
+  }
 
-renderCart();
+  // =========================
+  // 4️⃣ Build Email Content
+  // =========================
+  function buildEmailContent(cartItems) {
+    let itemsHtml = '';
+    let subtotal = 0;
 
-  </script>
+    cartItems.forEach(item => {
+      const itemTotal = item.price * item.qty;
+      subtotal += itemTotal;
+      itemsHtml += `
+        <tr>
+          <td style="padding:10px;border:1px solid #ddd;"><img src="${item.img}" alt="${item.name}" width="50"></td>
+          <td style="padding:10px;border:1px solid #ddd;">${item.name}</td>
+          <td style="padding:10px;border:1px solid #ddd;">${item.size || 'M'}</td>
+          <td style="padding:10px;border:1px solid #ddd;">${item.qty}</td>
+          <td style="padding:10px;border:1px solid #ddd;">$${itemTotal.toFixed(2)}</td>
+        </tr>
+      `;
+    });
+
+    const shipping = 2;
+    const total = subtotal + shipping;
+
+    return `
+      <h3>Order Details:</h3>
+      <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;">
+        <thead style="background-color:#f3f3f3;">
+          <tr>
+            <th style="padding:10px;border:1px solid #ddd;">Image</th>
+            <th style="padding:10px;border:1px solid #ddd;">Product</th>
+            <th style="padding:10px;border:1px solid #ddd;">Size</th>
+            <th style="padding:10px;border:1px solid #ddd;">Qty</th>
+            <th style="padding:10px;border:1px solid #ddd;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHtml}
+        </tbody>
+      </table>
+
+      <h3>Order Summary</h3>
+      <p>Subtotal: $${subtotal.toFixed(2)}</p>
+      <p>Shipping: $${shipping.toFixed(2)}</p>
+      <p style="font-weight:bold;">Total: $${total.toFixed(2)}</p>
+    `;
+  }
+
+  // =========================
+  // 5️⃣ Handle Order Submission
+  // =========================
+  document.getElementById('review-order-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const location = document.getElementById("locationSelect").value;
+    const province = document.getElementById("provinceInput").value.trim();
+    const firstName = document.querySelector('input[placeholder="First name"]').value.trim();
+    const lastName = document.querySelector('input[placeholder="Last name"]').value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const paymentStatus = document.getElementById("paymentStatus").value;
+    const sizesSummary = cart.map(item => `${item.name} (Size: ${item.size || 'M'}) x${item.qty}`).join(', ');
+
+    if (!email) return alert("Please enter your email.");
+    if (!paymentStatus) return alert("Please select payment status.");
+    if (paymentStatus === "unpaid") return alert("Please complete your payment first.");
+    if (cart.length === 0) return alert("Your cart is empty.");
+
+    const emailParams = {
+      user_email: email,
+      cart_html: buildEmailContent(cart),
+      to_name: "phnom03 team",
+      reply_to: email,
+      location,
+      province,
+      first_name: firstName,
+      last_name: lastName,
+      phone,
+      address,
+      payment_status: paymentStatus,
+      sizes_summary: sizesSummary
+    };
+
+    emailjs.send('service_3fn74jh', 'template_13ncekr', emailParams)
+      .then(() => {
+        alert('Receipt sent successfully! Thank you.');
+        localStorage.removeItem('cart');
+        window.location.href = "thankyou.html";
+      })
+      .catch((error) => {
+        alert('Failed to send email. Please try again later.');
+        console.error("EmailJS error:", error);
+      });
+  });
+
+  // =========================
+  // 6️⃣ Initial Render
+  // =========================
+  renderCart();
+</script>
+
 </body>
 </html>
