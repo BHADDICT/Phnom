@@ -12,13 +12,9 @@ function applyPromoCode() {
 
   let discount = 0;
 
-  // Check promo codes
-  if (code === "03AWC") {
-    discount = total * 0.10;
-    promoMessage.style.color = 'green';
-    promoMessage.textContent = `Promo applied! You saved $${discount.toFixed(2)}.`;
-  } else if (code === "HORSE03") { // new promo code
-    discount = total * 0.15;
+  // Valid promo codes (20% discount)
+  if (code === "03AWC" || code === "HORSE03") {
+    discount = total * 0.20;
     promoMessage.style.color = 'green';
     promoMessage.textContent = `Promo applied! You saved $${discount.toFixed(2)}.`;
   } else {
@@ -35,5 +31,6 @@ function applyPromoCode() {
     <p>Shipping: $${shipping.toFixed(2)}</p>
     <strong>Total: $${total.toFixed(2)}</strong>
   `;
+  
   document.getElementById('payment-total').innerText = `Total Amount: $${total.toFixed(2)}`;
 }
